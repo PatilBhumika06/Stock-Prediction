@@ -1,0 +1,24 @@
+{
+  "name": "stock-prediction-app",
+  "version": "1.0.0",
+  "description": "A stock prediction web application",
+  "scripts": {
+    "frontend": "npx live-server ./frontend --port=5500",
+    "backend": "node ./backend/server.js",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "start": "node ./backend/server.js",
+    "dev-auth": "node ./backend/server.js"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "bcrypt": "^6.0.0",
+    "concurrently": "^7.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "live-server": "^1.2.2",
+    "mongoose": "^8.18.3",
+    "node-fetch": "^3.3.2"
+  }
+}
