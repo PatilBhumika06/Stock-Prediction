@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Stock Prediction</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav class="navbar">
+		<div class="logo"><span>Stock</span> <span class="accent">Prediction</span></div>
+		<ul class="nav-links">
+			<li><a href="#" class="active">HOME</a></li>
+			<li><a href="about.html">ABOUT</a></li>
+			<li><a href="news.html">NEWS</a></li>
+		</ul>
+		<div class="nav-actions">
+			<a href="login.html"><button class="login-btn">LOGIN</button></a>
+			<a href="signup.html"><button class="signup-btn">SIGN UP</button></a>
+		</div>
+	</nav>
+	<section class="hero">
+		<div class="hero-content">
+			<h1>Advanced Stock Analysis & Predictive Insights</h1>
+			<p>Access comprehensive stock analysis, market trends, and AI-powered predictive insights to make smarter investment decisions. Explore real-time data, forecasts, and expert analysis—all in one powerful platform.</p>
+			<button class="cta-btn" id="checkPricesBtn">Check Prices</button>
+		</div>
+	</section>
+	<div class="news-info">
+		Stay updated with the latest market trends, analysis, and breakthrough insights in stock prediction. Our advanced visualizations and AI-driven summaries empower you to make confident investment decisions.
+	</div>
+	<div class="box-column">
+		<div class="info-box">
+			<div class="box-title">AI-Powered Stock Predictions</div>
+			<div class="box-chart">
+				<canvas id="barChart"></canvas>
+			</div>
+			<div class="box-desc">Our advanced algorithms analyze market patterns to predict stock performance with high accuracy. This visualization shows projected growth for leading companies.</div>
+		</div>
+		<div class="info-box">
+			<div class="box-title">Historical Price Trends</div>
+			<div class="box-chart">
+				<canvas id="priceChart"></canvas>
+			</div>
+			<div class="box-desc">Track historical performance and compare it with our predictive models to identify optimal buying and selling opportunities in the market.</div>
+		</div>
+		<div class="info-box">
+			<div class="box-title">Market Overview</div>
+			<div class="box-chart">
+				<div style="font-size:1.3rem;color:#1565c0;font-weight:700;">Reliance, TCS, HDFC, Apple, Tesla, and more</div>
+			</div>
+			<div class="box-desc">Get a comprehensive snapshot of key market players, their current positions, and expert performance insights to guide your investments.</div>
+		</div>
+	</div>
+	
+	<!-- Improved Login Modal -->
+	<div id="loginModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-title">Access Required</div>
+			<div class="modal-message">Please login or signup to access real-time stock predictions and premium features.</div>
+			<div class="modal-buttons">
+				<a href="login.html"><button class="login-btn" style="margin-right:10px;">Login</button></a>
+				<a href="signup.html"><button class="signup-btn">Sign Up</button></a>
+			</div>
+			<button class="modal-close" onclick="document.getElementById('loginModal').style.display='none'">Close</button>
+		</div>
+	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		// Bar Chart
+		new Chart(document.getElementById('barChart').getContext('2d'), {
+			type: 'bar',
+			data: {
+				labels: ['Reliance', 'TCS', 'HDFC', 'Apple', 'Tesla'],
+				datasets: [{
+					label: 'Predicted Growth (%)',
+					data: [12, 9, 7, 15, 18],
+					backgroundColor: [
+						'rgba(139, 195, 74, 0.8)',
+						'rgba(21, 101, 192, 0.8)',
+						'rgba(255, 159, 92, 0.8)',
+						'rgba(255, 127, 92, 0.8)',
+						'rgba(46, 204, 113, 0.8)'
+					],
+					borderColor: [
+						'rgb(139, 195, 74)',
+						'rgb(21, 101, 192)',
+						'rgb(255, 159, 92)',
+						'rgb(255, 127, 92)',
+						'rgb(46, 204, 113)'
+					],
+					borderWidth: 1,
+					borderRadius: 8
+				}]
+			},
+			options: {
+				responsive: true,
+				plugins: { 
+					legend: { display: false },
+					tooltip: {
+						backgroundColor: 'rgba(0, 0, 0, 0.7)',
+						titleColor: '#fff',
+						bodyColor: '#fff',
+						borderColor: '#4CAF50',
+						borderWidth: 1
+					}
+				},
+				scales: { 
+					y: { 
+						beginAtZero: true,
+						grid: {
+							color: 'rgba(0, 0, 0, 0.05)'
+						},
+						ticks: {
+							color: '#29543e'
+						}
+					},
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							color: '#29543e'
+						}
+					}
+				}
+			}
+		});
+		// Price Chart
+		new Chart(document.getElementById('priceChart').getContext('2d'), {
+			type: 'line',
+			data: {
+				labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+				datasets: [{
+					label: 'Price (INR)',
+					data: [2100, 2200, 2150, 2250, 2300, 2400],
+					borderColor: '#1565c0',
+					backgroundColor: 'rgba(21, 101, 192, 0.1)',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.4,
+					pointBackgroundColor: '#1565c0',
+					pointBorderColor: '#fff',
+					pointBorderWidth: 2,
+					pointRadius: 5
+				}]
+			},
+			options: {
+				responsive: true,
+				plugins: { 
+					legend: { display: false },
+					tooltip: {
+						backgroundColor: 'rgba(0, 0, 0, 0.7)',
+						titleColor: '#fff',
+						bodyColor: '#fff',
+						borderColor: '#1565c0',
+						borderWidth: 1
+					}
+				},
+				scales: { 
+					y: { 
+						beginAtZero: false,
+						grid: {
+							color: 'rgba(0, 0, 0, 0.05)'
+						},
+						ticks: {
+							color: '#29543e'
+						}
+					},
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							color: '#29543e'
+						}
+					}
+				}
+			}
+		});
+	</script>
+	<script src="main.js"></script>
+	<script>
+		document.getElementById('checkPricesBtn').onclick = function() {
+			document.getElementById('loginModal').style.display = 'flex';
+		};
+	</script>
+</body>
+</html>

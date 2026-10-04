@@ -1,2 +1,19 @@
-# Stock-Prediction
-The project is based on Stock Prediction, where with the help of prediction of stock we can invest in that particular stock. This is small Stock prediction project where I have took API from Twelve Data API .
+# @babel/runtime
+
+> babel's modular runtime helpers
+
+See our website [@babel/runtime](https://babeljs.io/docs/babel-runtime) for more information.
+
+## Install
+
+Using npm:
+
+```sh
+npm install --save @babel/runtime
+```
+
+or using yarn:
+
+```sh
+yarn add @babel/runtime
+```

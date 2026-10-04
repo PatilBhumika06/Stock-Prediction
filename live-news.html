@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Live Stock Market News Feed</title>
+	<link rel="stylesheet" href="style.css">
+	<style>
+		.page-header {
+			text-align: center;
+			font-size: 2.8rem;
+			font-weight: 800;
+			color: #fff;
+			margin-top: 30px;
+			margin-bottom: 20px;
+			text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+		}
+		
+		.news-container {
+			max-width: 1200px;
+			margin: 30px auto;
+			padding: 0 20px;
+		}
+		
+		.news-header {
+			background: rgba(255, 255, 255, 0.9);
+			border-radius: 20px;
+			padding: 30px;
+			margin-bottom: 30px;
+			text-align: center;
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(224, 247, 250, 0.5);
+		}
+		
+		.news-header-title {
+			font-size: 2rem;
+			font-weight: 700;
+			color: #1565c0;
+			margin-bottom: 15px;
+		}
+		
+		.news-header-desc {
+			font-size: 1.2rem;
+			color: #29543e;
+			line-height: 1.6;
+		}
+		
+		.controls-section {
+			background: rgba(255, 255, 255, 0.9);
+			border-radius: 20px;
+			padding: 25px;
+			margin-bottom: 30px;
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(224, 247, 250, 0.5);
+			display: flex;
+			flex-wrap: wrap;
+			gap: 20px;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		.search-bar {
+			display: flex;
+			gap: 15px;
+			flex: 1;
+			min-width: 300px;
+		}
+		
+		.search-input {
+			flex: 1;
+			padding: 15px 20px;
+			border: 2px solid #1565c0;
+			border-radius: 12px;
+			font-size: 1.1rem;
+			outline: none;
+		}
+		
+		.search-btn {
+			background: linear-gradient(45deg, #2196F3, #21CBF3);
+			color: white;
+			border: none;
+			border-radius: 12px;
+			padding: 0 25px;
+			font-size: 1.1rem;
+			font-weight: 700;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+		
+		.search-btn:hover {
+			transform: translateY(-3px);
+			box-shadow: 0 6px 15px rgba(33, 150, 243, 0.4);
+		}
+		
+		.filter-section {
+			display: flex;
+			gap: 15px;
+			flex-wrap: wrap;
+			align-items: center;
+		}
+		
+		.filter-label {
+			font-weight: 700;
+			color: #1565c0;
+			font-size: 1.1rem;
+		}
+		
+		.filter-select {
+			padding: 12px 15px;
+			border: 2px solid #1565c0;
+			border-radius: 12px;
+			font-size: 1rem;
+			background: white;
+			color: #29543e;
+		}
+		
+		.news-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+			gap: 25px;
+			margin-top: 20px;
+		}
+		
+		.news-item {
+			background: rgba(255, 255, 255, 0.95);
+			border-radius: 16px;
+			padding: 25px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+			transition: transform 0.3s ease, box-shadow 0.3s ease;
+			backdrop-filter: blur(10px);
+			border: 1px solid rgba(224, 247, 250, 0.3);
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+		
+		.news-item:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+		}
+		
+		.news-headline {
+			font-size: 1.3rem;
+			font-weight: 700;
+			color: #1565c0;
+			margin-bottom: 12px;
+			line-height: 1.4;
+			flex-grow: 1;
+		}
+		
+		.news-summary {
+			font-size: 1rem;
+			color: #29543e;
+			margin-bottom: 15px;
+			line-height: 1.6;
+			flex-grow: 1;
+		}
+		
+		.news-meta {
+			display: flex;
+			justify-content: space-between;
+			font-size: 0.9rem;
+			color: #4CAF50;
+			font-weight: 600;
+			margin-top: 10px;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+		
+		.news-source {
+			background: #2196F3;
+			color: white;
+			padding: 3px 8px;
+			border-radius: 12px;
+			font-size: 0.8rem;
+		}
+		
+		.news-date {
+			color: #666;
+		}
+		
+		.news-link {
+			display: inline-block;
+			color: #2196F3;
+			font-weight: 600;
+			text-decoration: none;
+			margin-top: 15px;
+			transition: color 0.2s;
+			align-self: flex-start;
+		}
+		
+		.news-link:hover {
+			color: #1565c0;
+			text-decoration: underline;
+		}
+		
+		.loading-message, .error-message, .info-message {
+			background: rgba(255, 255, 255, 0.9);
+			border-radius: 16px;
+			padding: 30px;
+			text-align: center;
+			color: #29543e;
+			font-size: 1.2rem;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+			margin: 30px auto;
+			max-width: 600px;
+		}
+		
+		.error-message {
+			color: #f44336;
+		}
+		
+		.info-message {
+			color: #FF9800;
+		}
+		
+		.refresh-section {
+			text-align: center;
+			margin: 20px 0;
+		}
+		
+		.refresh-btn {
+			background: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 12px;
+			padding: 12px 25px;
+			font-size: 1.1rem;
+			font-weight: 700;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+		
+		.refresh-btn:hover {
+			background: #45a049;
+			transform: translateY(-3px);
+			box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+		}
+		
+		.auto-refresh {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			margin-top: 15px;
+		}
+		
+		.auto-refresh-label {
+			font-weight: 600;
+			color: #29543e;
+		}
+		
+		.api-status {
+			background: rgba(255, 255, 255, 0.9);
+			border-radius: 16px;
+			padding: 20px;
+			text-align: center;
+			color: #29543e;
+			font-size: 1.1rem;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+			margin: 20px auto;
+			max-width: 600px;
+		}
+		
+		.api-working {
+			color: #4CAF50;
+			font-weight: 700;
+		}
+		
+		.api-not-working {
+			color: #f44336;
+			font-weight: 700;
+		}
+		
+		.news-timestamp {
+			text-align: center;
+			color: #666;
+			font-size: 0.9rem;
+			margin-top: 10px;
+		}
+		
+		.live-indicator {
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			background-color: #4CAF50;
+			border-radius: 50%;
+			margin-right: 8px;
+			animation: pulse 1.5s infinite;
+		}
+		
+		@keyframes pulse {
+			0% { opacity: 1; }
+			50% { opacity: 0.4; }
+			100% { opacity: 1; }
+		}
+		
+		.live-badge {
+			background: #f44336;
+			color: white;
+			padding: 3px 8px;
+			border-radius: 12px;
+			font-size: 0.8rem;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+		}
+		
+		@media (max-width: 768px) {
+			.page-header {
+				font-size: 2.2rem;
+			}
+			
+			.news-header {
+				padding: 20px;
+			}
+			
+			.news-header-title {
+				font-size: 1.6rem;
+			}
+			
+			.controls-section {
+				flex-direction: column;
+			}
+			
+			.search-bar {
+				width: 100%;
+			}
+			
+			.news-grid {
+				grid-template-columns: 1fr;
+			}
+			
+			.news-headline {
+				font-size: 1.2rem;
+			}
+			
+			.news-summary {
+				font-size: 0.95rem;
+			}
+			
+			.news-meta {
+				flex-direction: column;
+				gap: 5px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar">
+		<div class="logo"><span>Stock</span> <span class="accent">Prediction</span></div>
+		<ul class="nav-links">
+			<li><a href="index.html">HOME</a></li>
+			<li><a href="about.html">ABOUT</a></li>
+			<li><a href="news.html">NEWS</a></li>
+			<li><a href="live-news.html" class="active">LIVE NEWS</a></li>
+		</ul>
+		<div class="nav-actions">
+			<a href="login.html"><button class="login-btn">LOGIN</button></a>
+			<a href="signup.html"><button class="signup-btn">SIGN UP</button></a>
+		</div>
+	</nav>
+	
+	<div class="page-header">
+		<span class="live-badge"><span class="live-indicator"></span>LIVE</span> Market News Feed
+	</div>
+	
+	<div class="news-container">
+		<div class="news-header">
+			<div class="news-header-title">Real-Time Stock Market News</div>
+			<div class="news-header-desc">
+				Get the latest breaking news, market analysis, and financial updates as they happen. Our live feed brings you real-time information from trusted sources.
+			</div>
+		</div>
+		
+		<div id="apiStatus" class="api-status">
+			Checking API connectivity...
+		</div>
+		
+		<div class="controls-section">
+			<div class="search-bar">
+				<input type="text" id="newsSearchInput" class="search-input" placeholder="Search for specific stocks or topics...">
+				<button id="newsSearchBtn" class="search-btn">Search</button>
+			</div>
+			
+			<div class="filter-section">
+				<span class="filter-label">Category:</span>
+				<select id="categoryFilter" class="filter-select">
+					<option value="">All News</option>
+					<option value="technology">Technology</option>
+					<option value="finance">Finance</option>
+					<option value="energy">Energy</option>
+					<option value="healthcare">Healthcare</option>
+					<option value="consumer">Consumer</option>
+				</select>
+			</div>
+		</div>
+		
+		<div class="refresh-section">
+			<button id="refreshNewsBtn" class="refresh-btn">Refresh News</button>
+			<div class="auto-refresh">
+				<input type="checkbox" id="autoRefresh" checked>
+				<label for="autoRefresh" class="auto-refresh-label">Auto-refresh every 5 minutes</label>
+			</div>
+		</div>
+		
+		<div id="live-news">
+			<div class="loading-message">Loading live market news...</div>
+		</div>
+		
+		<div class="news-timestamp" id="newsTimestamp"></div>
+	</div>
+	
+	<script>
+		// API base URL (our backend)
+		const API_BASE = 'http://localhost:3000';
+		const newsContainer = document.getElementById('live-news');
+		const searchInput = document.getElementById('newsSearchInput');
+		const searchBtn = document.getElementById('newsSearchBtn');
+		const refreshBtn = document.getElementById('refreshNewsBtn');
+		const apiStatus = document.getElementById('apiStatus');
+		const newsTimestamp = document.getElementById('newsTimestamp');
+		const categoryFilter = document.getElementById('categoryFilter');
+		const autoRefreshCheckbox = document.getElementById('autoRefresh');
+		
+		// Check API connectivity
+		async function checkAPIConnectivity() {
+			try {
+				const response = await fetch(`${API_BASE}/api/usage`);
+				if (response.ok) {
+					apiStatus.innerHTML = '<span class="api-working">✓ Backend API Connection Successful</span>';
+					apiStatus.className = 'api-status';
+					return true;
+				} else {
+					throw new Error('API returned non-OK status');
+				}
+			} catch (error) {
+				console.error('API connectivity check failed:', error);
+				apiStatus.innerHTML = '<span class="api-not-working">⚠ Backend API Connection Issue</span>';
+				apiStatus.className = 'api-status';
+				return false;
+			}
+		}
+		
+		// Sample news data for fallback
+		const sampleNews = [
+			{
+				title: "Tech Stocks Rally as Federal Reserve Policy Uncertainty Eases",
+				description: "Major technology stocks surged today as investors reacted positively to recent comments from Federal Reserve officials suggesting a more cautious approach to interest rate hikes.",
+				source: "Financial Times",
+				date: new Date().toISOString(),
+				url: "#"
+			},
+			{
+				title: "Oil Prices Drop Amid Global Economic Concerns",
+				description: "Crude oil prices fell sharply this week as economic data from major economies pointed to slowing growth, reducing demand expectations.",
+				source: "Bloomberg",
+				date: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+				url: "#"
+			},
+			{
+				title: "European Markets Close Mixed as Inflation Data Looms",
+				description: "European equity markets ended the day with mixed results as investors awaited key inflation data that could influence central bank policies.",
+				source: "Reuters",
+				date: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
+				url: "#"
+			},
+			{
+				title: "Renewable Energy Sector Sees Record Investment Amid Climate Push",
+				description: "Global investment in renewable energy projects reached an all-time high in the second quarter, driven by government incentives and corporate sustainability commitments.",
+				source: "Wall Street Journal",
+				date: new Date(Date.now() - 10800000).toISOString(), // 3 hours ago
+				url: "#"
+			},
+			{
+				title: "Cryptocurrency Market Stabilizes After Recent Volatility",
+				description: "The cryptocurrency market showed signs of stabilization today following weeks of significant price swings, with several major coins posting modest gains.",
+				source: "CNBC",
+				date: new Date(Date.now() - 14400000).toISOString(), // 4 hours ago
+				url: "#"
+			},
+			{
+				title: "Federal Reserve Minutes Reveal Concerns Over Inflation",
+				description: "Minutes from the latest Federal Reserve meeting revealed ongoing concerns about persistent inflation, potentially influencing future monetary policy decisions.",
+				source: "MarketWatch",
+				date: new Date(Date.now() - 18000000).toISOString(), // 5 hours ago
+				url: "#"
+			}
+		];
+		
+		// Function to display news articles
+		function displayNews(articles) {
+			if (articles && articles.length > 0) {
+				// Sort articles by date (newest first)
+				const sortedArticles = articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+				
+				newsContainer.innerHTML = `
+					<div class="news-grid">
+						${sortedArticles.map(item => `
+							<div class='news-item'>
+								<div class='news-headline'>${item.title}</div>
+								<div class='news-summary'>${item.description || 'No summary available.'}</div>
+								<div class='news-meta'>
+									<span class='news-source'>${item.source}</span>
+									<span class='news-date'>${new Date(item.date).toLocaleString('en-US', { 
+										month: 'short', 
+										day: 'numeric', 
+										hour: '2-digit', 
+										minute: '2-digit'
+									})}</span>
+								</div>
+								<a href='${item.url}' target='_blank' class='news-link'>Read full article →</a>
+							</div>
+						`).join('')}
+					</div>
+				`;
+				
+				// Update timestamp
+				const now = new Date();
+				newsTimestamp.textContent = `Last updated: ${now.toLocaleString()}`;
+			} else {
+				newsContainer.innerHTML = '<div class="info-message">No news articles found for your search. Please try different keywords.</div>';
+				newsTimestamp.textContent = '';
+			}
+		}
+		
+		// Function to fetch news from our backend API
+		async function fetchNews(searchTerm = '', category = '') {
+			newsContainer.innerHTML = '<div class="loading-message">Loading live market news...</div>';
+			newsTimestamp.textContent = '';
+			
+			try {
+				// Try to fetch from our backend API first
+				let url = `${API_BASE}/stock/news?limit=20`;
+				if (searchTerm) {
+					url += `&symbol=${encodeURIComponent(searchTerm)}`;
+				}
+				
+				console.log(`Fetching live news from: ${url}`);
+				const response = await fetch(url);
+				const data = await response.json();
+				
+				console.log('Live news API response:', data);
+				
+				if (data && data.data && data.data.length > 0) {
+					// Filter by category if selected
+					let filteredNews = data.data;
+					if (category) {
+						filteredNews = data.data.filter(item => 
+							item.title.toLowerCase().includes(category) || 
+							item.description.toLowerCase().includes(category)
+						);
+					}
+					
+					displayNews(filteredNews);
+				} else {
+					// Fallback to sample data
+					const filteredNews = searchTerm ? 
+						sampleNews.filter(item => 
+							item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+							item.description.toLowerCase().includes(searchTerm.toLowerCase())
+						) : sampleNews;
+					displayNews(filteredNews);
+					newsContainer.innerHTML += '<div class="info-message" style="margin-top: 20px; grid-column: 1 / -1;">Displaying sample data as real news API returned no results.</div>';
+				}
+			} catch (error) {
+				console.error('Error fetching live news:', error);
+				// Fallback to sample data
+				const filteredNews = searchTerm ? 
+					sampleNews.filter(item => 
+						item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+						item.description.toLowerCase().includes(searchTerm.toLowerCase())
+					) : sampleNews;
+				displayNews(filteredNews);
+				newsContainer.innerHTML += '<div class="info-message" style="margin-top: 20px; grid-column: 1 / -1;">Displaying sample data due to API connectivity issues.</div>';
+			}
+		}
+		
+		// Event listeners
+		searchBtn.addEventListener('click', () => {
+			const searchTerm = searchInput.value.trim();
+			const category = categoryFilter.value;
+			fetchNews(searchTerm, category);
+		});
+		
+		searchInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') {
+				const searchTerm = searchInput.value.trim();
+				const category = categoryFilter.value;
+				fetchNews(searchTerm, category);
+			}
+		});
+		
+		categoryFilter.addEventListener('change', () => {
+			const searchTerm = searchInput.value.trim();
+			const category = categoryFilter.value;
+			fetchNews(searchTerm, category);
+		});
+		
+		refreshBtn.addEventListener('click', () => {
+			const searchTerm = searchInput.value.trim();
+			const category = categoryFilter.value;
+			fetchNews(searchTerm, category);
+		});
+		
+		// Auto-refresh news
+		function setupAutoRefresh() {
+			if (autoRefreshCheckbox.checked) {
+				const interval = setInterval(() => {
+					const searchTerm = searchInput.value.trim();
+					const category = categoryFilter.value;
+					fetchNews(searchTerm, category);
+				}, 5 * 60 * 1000); // 5 minutes
+				
+				// Clear interval when checkbox is unchecked
+				autoRefreshCheckbox.addEventListener('change', () => {
+					if (!autoRefreshCheckbox.checked) {
+						clearInterval(interval);
+					} else {
+						// Restart interval if checked again
+						setupAutoRefresh();
+					}
+				});
+			}
+		}
+		
+		// Load initial news when page loads
+		document.addEventListener('DOMContentLoaded', async () => {
+			// Check API connectivity first
+			await checkAPIConnectivity();
+			// Then fetch news
+			fetchNews();
+			// Setup auto-refresh
+			setupAutoRefresh();
+		});
+	</script>
+</body>
+</html>

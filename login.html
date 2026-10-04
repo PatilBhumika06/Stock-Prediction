@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Stock Prediction</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body.login-bg {
+            background-image: url('login.jpg');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        body.login-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 40px 32px 32px 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .login-logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-logo .accent {
+            color: #4CAF50;
+        }
+        
+        .login-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #e0f7fa;
+        }
+        
+        .login-container .icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px auto;
+            display: block;
+            opacity: 0.9;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        
+        .login-container h2 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e0f7fa;
+        }
+        
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 0;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1.1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s;
+        }
+        
+        .login-container input[type="text"]:focus,
+        .login-container input[type="password"]:focus {
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+        
+        .login-container input[type="text"]::placeholder,
+        .login-container input[type="password"]::placeholder {
+            color: #b0c4d4;
+        }
+        
+        .login-container .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+        
+        .login-container .actions label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e0f7fa;
+            font-weight: 500;
+        }
+        
+        .login-container .actions a {
+            color: #baf7e2;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .login-container .actions a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .login-container button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .login-container button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+        
+        .signup-link {
+            margin-top: 25px;
+            color: #e0f7fa;
+        }
+        
+        .signup-link a {
+            color: #baf7e2;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .signup-link a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .back-btn {
+            background: #2196F3;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            width: 100%;
+        }
+        
+        .back-btn:hover {
+            background: #1976D2;
+        }
+        
+        .debug-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+        }
+        
+        .forgot-password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .modal-input {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 1.1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-input::placeholder {
+            color: #b0c4d4;
+        }
+        
+        .modal-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #FF9800, #FF5722);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+        }
+        
+        .modal-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .modal-success {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+        
+        .modal-error {
+            background: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+        
+        /* Error display styles */
+        .error-display {
+            display: none;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffcccc;
+            text-align: left;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+            
+            .login-container h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="login-bg">
+    <div class="login-container">
+        <div class="login-logo"><span>Stock</span> <span class="accent">Prediction</span></div>
+        <div class="login-subtitle">Access your investment insights</div>
+        <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><rect x="8" y="10" width="8" height="6" rx="2"/><path d="M12 13v-2"/></svg>
+        <h2>Welcome Back</h2>
+        <div id="errorDisplay" class="error-display">
+            <!-- Error messages will be displayed here -->
+        </div>
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="usernameInput">Username or Email</label>
+                <input type="text" id="usernameInput" placeholder="Enter your username or email" required>
+            </div>
+            <div class="input-group">
+                <label for="passwordInput">Password</label>
+                <input type="password" id="passwordInput" placeholder="Enter your password" required>
+            </div>
+            <div class="actions">
+                <label><input type="checkbox" id="rememberMe"> Remember me</label>
+                <a href="#" onclick="openForgotPasswordModal(); return false;">Forgot Password?</a>
+            </div>
+            <button type="submit" id="loginBtn">LOGIN</button>
+        </form>
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign up now</a>
+        </div>
+        <button class="back-btn" onclick="goBack()">Back to Home</button>
+        
+        <!-- Debug buttons for troubleshooting -->
+        
+    </div>
+    
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="forgot-password-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h2 class="modal-title">Reset Password</h2>
+            <p>Enter your username and we'll send instructions to reset your password.</p>
+            <input type="text" id="resetUsername" class="modal-input" placeholder="Enter your username">
+            <button class="modal-btn" onclick="resetPassword()">Send Reset Instructions</button>
+            <div id="modalMessage" class="modal-message"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Load error reporter for debugging
+        const errorScript = document.createElement('script');
+        errorScript.src = 'error-reporter.js';
+        errorScript.onload = function() {
+            console.log('Error reporter loaded successfully');
+        };
+        errorScript.onerror = function() {
+            console.log('Error reporter not available');
+        };
+        document.head.appendChild(errorScript);
+        
+        // Add error handling for cross-origin issues
+        document.getElementById('loginForm').onsubmit = function(e) {
+            e.preventDefault();
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            
+            console.log('=== LOGIN ATTEMPT ===');
+            console.log('Current origin:', window.location.origin);
+            console.log('Username:', username);
+            console.log('Password length:', password.length);
+            
+            // Log to error reporter if available
+            if (window.errorReporter) {
+                window.errorReporter.logError({
+                    type: 'Login Attempt',
+                    message: 'User attempting to login',
+                    username: username ? 'Provided' : 'Not provided',
+                    password: password ? 'Provided' : 'Not provided'
+                });
+            }
+            
+            if (!username || !password) {
+                showError('Please enter both username and password.');
+                return;
+            }
+            
+            // Show loading state
+            const loginBtn = document.getElementById('loginBtn');
+            const originalText = loginBtn.textContent;
+            loginBtn.textContent = 'Logging in...';
+            loginBtn.disabled = true;
+            
+            // Clear any previous error messages
+            hideError();
+            
+            // Determine the correct API base URL
+            const apiBaseUrl = window.location.origin.replace(':5500', ':3000');
+            const loginUrl = `${apiBaseUrl}/api/auth/login`;
+            
+            console.log('Sending request to:', loginUrl);
+            
+            // Call backend login API
+            fetch(loginUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => {
+                console.log('Received response:', response.status, response.statusText);
+                
+                // Log response headers for debugging
+                console.log('Response headers:');
+                response.headers.forEach((value, name) => {
+                    console.log(`  ${name}: ${value}`);
+                });
+                
+                // Check if response is OK (status 200-299)
+                if (!response.ok) {
+                    console.error('HTTP Error Response:', response.status, response.statusText);
+                    return response.json()
+                        .then(errorData => {
+                            console.log('Error response data:', errorData);
+                            throw new Error(errorData.error || `Server error: ${response.status} ${response.statusText}`);
+                        })
+                        .catch(parseError => {
+                            // If we can't parse JSON, throw generic error
+                            if (parseError instanceof SyntaxError) {
+                                throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                            }
+                            throw parseError;
+                        });
+                }
+                
+                return response.json();
+            })
+            .then(data => {
+                console.log('Login response data:', data);
+                
+                // Check if we received an error from the server
+                if (data.error) {
+                    console.error('Server returned error:', data.error);
+                    throw new Error(data.error);
+                }
+                
+                // Check if we received a token (successful login)
+                if (data.token) {
+                    console.log('Login successful, storing user data');
+                    // Store token and user data in localStorage
+                    try {
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('username', data.user.username);
+                        localStorage.setItem('userId', data.user.id);
+                        
+                        // Remember me functionality
+                        if (document.getElementById('rememberMe').checked) {
+                            localStorage.setItem('rememberMe', 'true');
+                        } else {
+                            localStorage.removeItem('rememberMe');
+                        }
+                        
+                        console.log('Redirecting to afterlogin.html');
+                        
+                        // Log success to error reporter
+                        if (window.errorReporter) {
+                            window.errorReporter.logError({
+                                type: 'Login Success',
+                                message: 'User successfully logged in',
+                                username: data.user.username
+                            });
+                        }
+                        
+                        window.location.href = 'afterlogin.html';
+                    } catch (storageError) {
+                        console.error('Error storing user data:', storageError);
+                        throw new Error('Failed to store login data: ' + storageError.message);
+                    }
+                } else {
+                    console.error('No token received in response');
+                    throw new Error('Login failed: Invalid response from server');
+                }
+            })
+            .catch(error => {
+                console.error('=== LOGIN ERROR ===');
+                console.error('Error type:', error.constructor.name);
+                console.error('Error message:', error.message);
+                console.error('===================');
+                
+                // Log to error reporter
+                if (window.errorReporter) {
+                    window.errorReporter.logError({
+                        type: 'Login Error',
+                        message: error.message,
+                        stack: error.stack
+                    });
+                }
+                
+                // Display error message to user
+                let errorMessage = 'Login failed. Please try again.';
+                
+                if (error instanceof TypeError) {
+                    // Network error (e.g., server unreachable)
+                    errorMessage = 'Unable to connect to server. Please check:\n1. The server is running on port 3000\n2. You are accessing the page from http://localhost:3000\n3. Your internet connection';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                showError(errorMessage);
+            })
+            .finally(() => {
+                // Reset button state
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
+                console.log('Login attempt completed');
+            });
+        };
+        
+        // Function to show error messages
+        function showError(message) {
+            const errorDisplay = document.getElementById('errorDisplay');
+            if (errorDisplay) {
+                errorDisplay.textContent = message;
+                errorDisplay.style.display = 'block';
+            } else {
+                // Fallback to alert if no error display element
+                alert(message);
+            }
+        }
+        
+        // Function to hide error messages
+        function hideError() {
+            const errorDisplay = document.getElementById('errorDisplay');
+            if (errorDisplay) {
+                errorDisplay.style.display = 'none';
+                errorDisplay.textContent = '';
+            }
+        }
+        
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+        
+        // Open forgot password modal
+        function openForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'flex';
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('forgotPasswordModal').style.display = 'none';
+            document.getElementById('resetUsername').value = '';
+            document.getElementById('modalMessage').style.display = 'none';
+        }
+        
+        // Reset password function
+        function resetPassword() {
+            const username = document.getElementById('resetUsername').value.trim();
+            const messageElement = document.getElementById('modalMessage');
+            
+            if (!username) {
+                showMessage('Please enter your username.', 'error');
+                return;
+            }
+            
+            // Simulate password reset process
+            // In a real application, this would send a request to the backend
+            showMessage('Instructions to reset your password have been sent to your registered email address.', 'success');
+            
+            // Clear the input after a delay
+            setTimeout(() => {
+                document.getElementById('resetUsername').value = '';
+            }, 3000);
+        }
+        
+        // Show message in modal
+        function showMessage(message, type) {
+            const messageElement = document.getElementById('modalMessage');
+            messageElement.textContent = message;
+            messageElement.className = 'modal-message';
+            messageElement.classList.add(type === 'success' ? 'modal-success' : 'modal-error');
+            messageElement.style.display = 'block';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('forgotPasswordModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Load remembered username if available
+        window.onload = function() {
+            if (localStorage.getItem('rememberMe') === 'true') {
+                document.getElementById('rememberMe').checked = true;
+            }
+        }
+        
+        // Debug functions
+        function showErrorReport() {
+            if (window.errorReporter) {
+                const errors = window.errorReporter.getErrorsFromStorage();
+                if (errors.length > 0) {
+                    alert('Errors found:\n' + JSON.stringify(errors, null, 2));
+                } else {
+                    alert('No errors found in report');
+                }
+            } else {
+                alert('Error reporter not available');
+            }
+        }
+        
+        function downloadErrorReport() {
+            if (window.errorReporter) {
+                window.errorReporter.downloadReport();
+            } else {
+                alert('Error reporter not available');
+            }
+        }
+        
+        function clearErrorReport() {
+            if (window.errorReporter) {
+                window.errorReporter.clearErrors();
+                alert('Error report cleared');
+            } else {
+                alert('Error reporter not available');
+            }
+        }
+    </script>
+</body>
+</html>

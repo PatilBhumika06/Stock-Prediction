@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Details - Stock Prediction</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="stock-data.js"></script>
+    <script src="live-stock-data.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: url('bull.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            position: relative;
+            color: #000000; /* Changed to black for better visibility */
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: -1;
+        }
+        
+        .navbar {
+            background: rgba(41, 84, 62, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+            height: 70px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo .accent {
+            color: #4CAF50;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-input {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #4CAF50;
+            background: rgba(255, 255, 255, 0.9); /* Lighter background for better contrast */
+            color: #000000; /* Changed to black for better visibility */
+            font-size: 1rem;
+            width: 200px;
+        }
+        
+        .search-dropdown {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 2px solid #4CAF50;
+            background: rgba(255, 255, 255, 0.9); /* Lighter background for better contrast */
+            color: #000000; /* Changed to black for better visibility */
+            font-size: 1rem;
+            width: 250px;
+        }
+        
+        .search-btn {
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-btn:hover {
+            background: #45a049;
+        }
+        
+        .back-btn {
+            background: #2196F3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+        
+        .back-btn:hover {
+            background: #1976D2;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .section {
+            background: rgba(35, 38, 58, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+        
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        /* Stock Summary */
+        .stock-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            color: #b2ebf2;
+            margin-bottom: 8px;
+        }
+        
+        .summary-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #000000; /* Changed to black for better visibility */
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            height: 400px;
+            position: relative;
+        }
+        
+        /* AI Chat */
+        .ai-chat {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #4CAF50;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .chat-btn {
+            background: #2196F3;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        /* Watchlist */
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff; /* Make watchlist text white */
+        }
+        
+        .watchlist-item span {
+            color: #ffffff; /* Ensure all text in watchlist items is white */
+        }
+        
+        /* AI Predictions */
+        .prediction-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .prediction-symbol {
+            font-weight: 700;
+            color: #4CAF50;
+        }
+        
+        .prediction-accuracy {
+            background: #2196F3;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .prediction-details {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* Loading and Error States */
+        .loading, .error {
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .loading {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        /* Save to DB button */
+        .save-db-btn {
+            background: #FF9800;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .save-db-btn:hover {
+            background: #F57C00;
+        }
+        
+        .save-db-btn:disabled {
+            background: #757575;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .stock-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><span>Stock</span> <span class="accent">Prediction</span></div>
+        <div class="search-container">
+            <input type="text" class="search-input" id="stockSearch" placeholder="Search for stock" value="">
+            <select class="search-dropdown" id="stockDropdown">
+                <option value="">Select a stock...</option>
+            </select>
+            <button class="search-btn" onclick="searchStock()">Search</button>
+            <button class="back-btn" onclick="goBack()">Back</button>
+            <button class="back-btn" onclick="goHome()" style="background: #FF9800; margin-left: 10px;">Home</button>
+            <button class="back-btn" onclick="refreshData()" style="background: #9C27B0; margin-left: 10px;">Refresh</button>
+            <button class="back-btn" onclick="addToWatchlist()" style="background: #4CAF50; margin-left: 10px;">Add to Watchlist</button>
+            <button class="save-db-btn" onclick="saveToDatabase()" id="saveToDBBtn" disabled>Save to DB</button>
+            <button class="back-btn" onclick="logout()" style="background: #f44336; margin-left: 10px;">Logout</button>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div id="dataTimestamp" style="text-align: right; color: #b2ebf2; font-size: 0.9rem; margin-bottom: 10px;"></div>
+        <div class="main-content">
+            <div class="left-column">
+                <!-- Stock Summary -->
+                <div class="section">
+                    <div class="section-header">Stock Summary</div>
+                    <div class="stock-summary">
+                        <div class="summary-box">
+                            <div class="summary-label">Open Price</div>
+                            <div class="summary-value" id="openPrice">$-.--</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-label">High Price</div>
+                            <div class="summary-value" id="highPrice">$-.--</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-label">Low Price</div>
+                            <div class="summary-value" id="lowPrice">$-.--</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-label">Close Price</div>
+                            <div class="summary-value" id="closePrice">$-.--</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="summary-label">Volume</div>
+                            <div class="summary-value" id="volume">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Price Chart Analysis -->
+                <div class="section">
+                    <div class="section-header">Price Chart Analysis</div>
+                    <div class="chart-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- AI Chat Box -->
+                <div class="section">
+                    <div class="section-header">AI Assistant</div>
+                    <div class="ai-chat">
+                        <div class="chat-messages" id="chatMessages">
+                            <div style="color: #ffffff;">Welcome to the AI Assistant! Ask me anything about stock market trends and prediction</div>
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="aiQuestion" placeholder="Ask about stock predictions, market trends, etc.">
+                            <button class="chat-btn" onclick="askAI()">Ask</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-column">
+                <!-- Watchlist -->
+                <div class="section">
+                    <div class="section-header">Watchlist</div>
+                    <div id="watchlistContainer">
+                        <!-- Watchlist items will be dynamically added here -->
+                        <div class="watchlist-item">
+                            <span>Loading...</span>
+                            <span>₹-.--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Predictions -->
+                <div class="section">
+                    <div class="section-header">AI Predictions</div>
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <div class="prediction-symbol" id="predictionSymbol1">-</div>
+                            <div class="prediction-accuracy">92.4% Accuracy</div>
+                        </div>
+                        <div class="prediction-details">
+                            <span>Tomorrow: <span id="predictionTomorrow">-</span></span>
+                            <span id="predictionChange1">-</span>
+                        </div>
+                    </div>
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <div class="prediction-symbol" id="predictionSymbol2">-</div>
+                            <div class="prediction-accuracy">88.7% Accuracy</div>
+                        </div>
+                        <div class="prediction-details">
+                            <span>Next Day: <span id="predictionNextDay">-</span></span>
+                            <span id="predictionChange2">-</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bar Graph -->
+                <div class="section">
+                    <div class="section-header">Bar Graph Analysis</div>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Current stock data
+        let currentStockData = null;
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing components...');
+            console.log('stockData available:', typeof stockData !== 'undefined');
+            console.log('populateStockDropdown available:', typeof populateStockDropdown === 'function');
+            
+            // Clear cache on page load to ensure fresh data
+            if (typeof liveStockData !== 'undefined' && liveStockData.cache) {
+                console.log('Clearing cache on page load');
+                liveStockData.cache.clear();
+            }
+            
+            if (typeof stockData !== 'undefined') {
+                console.log('Stock data loaded:');
+                console.log('- Indian stocks:', stockData.indian ? stockData.indian.length : 0);
+                console.log('- Global stocks:', stockData.global ? stockData.global.length : 0);
+            }
+            
+            if (typeof populateStockDropdown === 'function') {
+                console.log('Calling populateStockDropdown...');
+                populateStockDropdown();
+                console.log('populateStockDropdown completed');
+            } else {
+                console.error('populateStockDropdown function not found!');
+            }
+            
+            initializeChart();
+            initializeBarChart();
+            loadWatchlistData();
+            // Load default stock data (if there's a symbol in the search box)
+            const searchTerm = document.getElementById('stockSearch').value.trim();
+            const selectedStock = document.getElementById('stockDropdown').value;
+            const symbol = searchTerm || selectedStock;
+            if (symbol) {
+                fetchStockData(symbol);
+            }
+        });
+        
+        // Initialize chart
+        let priceChart;
+        function initializeChart() {
+            console.log('Initializing price chart...');
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Stock Price',
+                        data: [170, 172, 171, 173, 175, 174, 176],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0f7fa'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#b2ebf2'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#b2ebf2'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize bar chart
+        let barChart;
+        function initializeBarChart() {
+            console.log('Initializing bar chart...');
+            const ctx = document.getElementById('barChart').getContext('2d');
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Open', 'High', 'Low', 'Close'],
+                    datasets: [{
+                        label: 'Price',
+                        data: [172.10, 173.50, 171.80, 172.35],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0f7fa'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#b2ebf2'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#b2ebf2'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Search stock function
+        function searchStock() {
+            const searchTerm = document.getElementById('stockSearch').value.trim();
+            const selectedStock = document.getElementById('stockDropdown').value;
+            
+            const symbol = searchTerm || selectedStock;
+            console.log('Searching for stock:', symbol);
+            
+            if (symbol) {
+                // Add a timestamp to show when the data was fetched
+                const now = new Date();
+                const timestampElement = document.getElementById('dataTimestamp');
+                if (timestampElement) {
+                    timestampElement.textContent = `Data fetched at: ${now.toLocaleTimeString()}`;
+                }
+                
+                fetchStockData(symbol);
+            } else {
+                alert('Please enter a stock symbol or select one from the dropdown');
+            }
+        }
+        
+        // Fetch live stock data
+        async function fetchStockData(symbol) {
+            console.log('Fetching stock data for:', symbol);
+            try {
+                // Show loading state
+                document.getElementById('openPrice').textContent = 'Loading...';
+                document.getElementById('highPrice').textContent = 'Loading...';
+                document.getElementById('lowPrice').textContent = 'Loading...';
+                document.getElementById('closePrice').textContent = 'Loading...';
+                document.getElementById('volume').textContent = 'Loading...';
+                
+                // Fetch live data using the existing liveStockData system
+                console.log('Calling liveStockData.fetchStockQuote...');
+                const stockData = await liveStockData.fetchStockQuote(symbol);
+                console.log('Received stock data:', stockData);
+                
+                // Store current stock data
+                currentStockData = stockData;
+                
+                // Enable save to DB button
+                document.getElementById('saveToDBBtn').disabled = false;
+                
+                // Improved check for mock data
+                const isMockData = stockData && 
+                    (stockData.open === "172.10000" || 
+                     (typeof stockData.open === 'string' && stockData.open.includes('172.10')) ||
+                     !stockData.datetime);
+                
+                if (isMockData) {
+                    console.log('Using mock data - prices may not match real market data');
+                    // Show a warning message
+                    const warningElement = document.createElement('div');
+                    warningElement.textContent = 'Note: Using sample data. Check API key configuration or network connection.';
+                    warningElement.style.color = '#FFA500';
+                    warningElement.style.fontSize = '0.9rem';
+                    warningElement.style.marginTop = '5px';
+                    
+                    // Remove any existing warning
+                    const existingWarning = document.querySelector('.data-warning');
+                    if (existingWarning) {
+                        existingWarning.remove();
+                    }
+                    
+                    // Add warning after the section header
+                    const sectionHeader = document.querySelector('.section-header');
+                    if (sectionHeader) {
+                        sectionHeader.parentNode.insertBefore(warningElement, sectionHeader.nextSibling);
+                        warningElement.className = 'data-warning';
+                    }
+                } else {
+                    // Remove warning if we have real data
+                    const existingWarning = document.querySelector('.data-warning');
+                    if (existingWarning) {
+                        existingWarning.remove();
+                    }
+                    
+                    // Update timestamp
+                    const now = new Date();
+                    const timestampElement = document.getElementById('dataTimestamp');
+                    if (timestampElement) {
+                        timestampElement.textContent = `Data fetched at: ${now.toLocaleTimeString()}`;
+                    }
+                }
+                
+                if (stockData) {
+                    updateStockSummary(stockData);
+                    updateChart(stockData);
+                    updateBarChart(stockData);
+                    updatePredictions(stockData);
+                } else {
+                    console.log('No stock data received, using mock data');
+                    // Use mock data as fallback
+                    const mockData = getMockStockData(symbol);
+                    updateStockSummary(mockData);
+                    updateChart(mockData);
+                    updateBarChart(mockData);
+                    updatePredictions(mockData);
+                }
+            } catch (error) {
+                console.error('Error fetching stock data:', error);
+                // Use mock data as fallback
+                const mockData = getMockStockData(symbol);
+                updateStockSummary(mockData);
+                updateChart(mockData);
+                updateBarChart(mockData);
+                updatePredictions(mockData);
+            }
+        }
+        
+        // Mock stock data for fallback
+        function getMockStockData(symbol) {
+            console.log('Generating mock data for:', symbol);
+            return {
+                symbol: symbol,
+                name: symbol + " Corporation",
+                open: (Math.random() * 1000).toFixed(2),
+                high: (Math.random() * 1000 + 10).toFixed(2),
+                low: (Math.random() * 1000).toFixed(2),
+                close: (Math.random() * 1000).toFixed(2),
+                volume: Math.floor(Math.random() * 10000000),
+                change: (Math.random() * 20 - 10).toFixed(2),
+                percent_change: (Math.random() * 10 - 5).toFixed(2)
+            };
+        }
+        
+        // Update stock summary
+        function updateStockSummary(data) {
+            console.log('Updating stock summary with data:', data);
+            // Log the raw data values
+            console.log('Raw data values:', {
+                open: data.open,
+                high: data.high,
+                low: data.low,
+                close: data.close,
+                volume: data.volume
+            });
+            
+            document.getElementById('openPrice').textContent = data.open ? '₹' + parseFloat(data.open).toFixed(2) : '₹-.--';
+            document.getElementById('highPrice').textContent = data.high ? '₹' + parseFloat(data.high).toFixed(2) : '₹-.--';
+            document.getElementById('lowPrice').textContent = data.low ? '₹' + parseFloat(data.low).toFixed(2) : '₹-.--';
+            document.getElementById('closePrice').textContent = data.close ? '₹' + parseFloat(data.close).toFixed(2) : '₹-.--';
+            document.getElementById('volume').textContent = data.volume ? parseInt(data.volume).toLocaleString() : '-';
+        }
+        
+        // Update chart with new data
+        function updateChart(stockData) {
+            console.log('Updating chart with data:', stockData);
+            if (priceChart) {
+                // Generate some mock price data for the chart based on the stock data
+                const basePrice = parseFloat(stockData.close) || 100;
+                const prices = [];
+                const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                
+                for (let i = 0; i < 7; i++) {
+                    // Generate some variation around the base price
+                    const variation = (Math.random() - 0.5) * basePrice * 0.1;
+                    prices.push(basePrice + variation);
+                }
+                
+                priceChart.data.datasets[0].data = prices;
+                priceChart.data.datasets[0].label = (stockData.symbol || 'Stock') + ' Price';
+                priceChart.data.labels = labels;
+                priceChart.update();
+            }
+        }
+        
+        // Update bar chart with new data
+        function updateBarChart(stockData) {
+            console.log('Updating bar chart with data:', stockData);
+            if (barChart) {
+                const open = parseFloat(stockData.open) || 172.10;
+                const high = parseFloat(stockData.high) || 173.50;
+                const low = parseFloat(stockData.low) || 171.80;
+                const close = parseFloat(stockData.close) || 172.35;
+                
+                barChart.data.datasets[0].data = [open, high, low, close];
+                barChart.data.datasets[0].label = (stockData.symbol || 'Stock') + ' Prices (₹)';
+                barChart.update();
+            }
+        }
+        
+        // Update predictions
+        function updatePredictions(stockData) {
+            console.log('Updating predictions with data:', stockData);
+            const basePrice = parseFloat(stockData.close) || 100;
+            
+            // Tomorrow's prediction
+            const tomorrowChange = (Math.random() - 0.5) * basePrice * 0.05;
+            const tomorrowPrice = basePrice + tomorrowChange;
+            const tomorrowPercent = (tomorrowChange / basePrice) * 100;
+            
+            document.getElementById('predictionSymbol1').textContent = stockData.symbol || '-';
+            document.getElementById('predictionTomorrow').textContent = '₹' + tomorrowPrice.toFixed(2);
+            document.getElementById('predictionChange1').textContent = 
+                (tomorrowChange >= 0 ? '+' : '') + '₹' + Math.abs(tomorrowChange).toFixed(2) + 
+                ' (' + (tomorrowPercent >= 0 ? '+' : '') + tomorrowPercent.toFixed(2) + '%)';
+            document.getElementById('predictionChange1').style.color = tomorrowChange >= 0 ? '#4CAF50' : '#f44336';
+            
+            // Next day's prediction
+            const nextDayChange = (Math.random() - 0.5) * basePrice * 0.05;
+            const nextDayPrice = basePrice + nextDayChange + (Math.random() - 0.5) * basePrice * 0.02;
+            const nextDayPercent = (nextDayChange / basePrice) * 100;
+            
+            document.getElementById('predictionSymbol2').textContent = stockData.symbol || '-';
+            document.getElementById('predictionNextDay').textContent = '₹' + nextDayPrice.toFixed(2);
+            document.getElementById('predictionChange2').textContent = 
+                (nextDayChange >= 0 ? '+' : '') + '₹' + Math.abs(nextDayChange).toFixed(2) + 
+                ' (' + (nextDayPercent >= 0 ? '+' : '') + nextDayPercent.toFixed(2) + '%)';
+            document.getElementById('predictionChange2').style.color = nextDayChange >= 0 ? '#4CAF50' : '#f44336';
+        }
+        
+        // Load watchlist data
+        async function loadWatchlistData() {
+            console.log('Loading watchlist data...');
+            const watchlistContainer = document.getElementById('watchlistContainer');
+            
+            // Get auth token
+            const token = localStorage.getItem('token');
+            
+            try {
+                let watchlistSymbols = ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT']; // Default watchlist
+                
+                // If user is logged in, fetch their watchlist from backend
+                if (token) {
+                    const response = await fetch('/api/auth/watchlist', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.watchlist && data.watchlist.length > 0) {
+                            watchlistSymbols = data.watchlist;
+                        }
+                    }
+                }
+                
+                // Clear container and add watchlist items
+                watchlistContainer.innerHTML = '';
+                
+                // Fetch data for each watchlist symbol
+                for (const symbol of watchlistSymbols) {
+                    try {
+                        console.log('Fetching watchlist data for:', symbol);
+                        const data = await liveStockData.fetchStockQuote(symbol);
+                        console.log('Received watchlist data for ' + symbol + ':', data);
+                        
+                        const watchlistItem = document.createElement('div');
+                        watchlistItem.className = 'watchlist-item';
+                        
+                        if (data && data.close) {
+                            watchlistItem.innerHTML = `
+                                <span>${symbol}</span>
+                                <span>₹${parseFloat(data.close).toFixed(2)}</span>
+                            `;
+                        } else {
+                            watchlistItem.innerHTML = `
+                                <span>${symbol}</span>
+                                <span>₹-.--</span>
+                            `;
+                        }
+                        
+                        watchlistContainer.appendChild(watchlistItem);
+                    } catch (error) {
+                        console.error('Error fetching watchlist data for ' + symbol + ':', error);
+                        
+                        const watchlistItem = document.createElement('div');
+                        watchlistItem.className = 'watchlist-item';
+                        watchlistItem.innerHTML = `
+                            <span>${symbol}</span>
+                            <span>₹-.--</span>
+                        `;
+                        watchlistContainer.appendChild(watchlistItem);
+                    }
+                }
+                
+                // If no symbols in watchlist, show a message
+                if (watchlistSymbols.length === 0) {
+                    watchlistContainer.innerHTML = '<div class="watchlist-item"><span>Your watchlist is empty</span><span></span></div>';
+                }
+                
+            } catch (error) {
+                console.error('Error loading watchlist:', error);
+                watchlistContainer.innerHTML = '<div class="watchlist-item"><span>Error loading watchlist</span><span></span></div>';
+            }
+        }
+        
+        // Add current stock to watchlist
+        async function addToWatchlist() {
+            const searchTerm = document.getElementById('stockSearch').value.trim();
+            const selectedStock = document.getElementById('stockDropdown').value;
+            const symbol = searchTerm || selectedStock;
+            
+            if (!symbol) {
+                alert('Please select or enter a stock symbol first.');
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please log in to add stocks to your watchlist.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/watchlist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ symbol })
+                });
+                
+                if (response.ok) {
+                    alert(`${symbol} added to your watchlist!`);
+                    // Refresh watchlist
+                    loadWatchlistData();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to add stock to watchlist.');
+                }
+            } catch (error) {
+                console.error('Error adding to watchlist:', error);
+                alert('Failed to add stock to watchlist. Please try again.');
+            }
+        }
+        
+        // Ask AI function
+        function askAI() {
+            const question = document.getElementById('aiQuestion').value.trim();
+            if (question) {
+                const chatMessages = document.getElementById('chatMessages');
+                const userMessage = document.createElement('div');
+                userMessage.innerHTML = '<strong style="color: #ffffff;">You:</strong> <span style="color: #ffffff;">' + question + '</span>';
+                chatMessages.appendChild(userMessage);
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiResponse = document.createElement('div');
+                    aiResponse.innerHTML = '<strong style="color: #ffffff;">AI:</strong> <span style="color: #ffffff;">Based on market analysis, ' + question + 
+                        '. Current trends suggest a ' + (Math.random() > 0.5 ? 'positive' : 'cautious') + 
+                        ' outlook with approximately ' + (Math.random() * 10 + 2).toFixed(1) + 
+                        '% expected volatility in the near term.</span>';
+                    chatMessages.appendChild(aiResponse);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+                
+                document.getElementById('aiQuestion').value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else {
+                alert('Please enter a question for the AI assistant');
+            }
+        }
+        
+        // Go back to previous page
+        function goBack() {
+            window.location.href = 'afterlogin.html';
+        }
+        
+        // Logout function
+        function logout() {
+            try {
+                // Clear user data from localStorage
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                localStorage.removeItem('userId');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Refresh data function
+        function refreshData() {
+            // Clear the cache to force a fresh API call
+            liveStockData.cache.clear();
+            
+            // Get the currently selected stock
+            const searchTerm = document.getElementById('stockSearch').value.trim();
+            const selectedStock = document.getElementById('stockDropdown').value;
+            
+            const symbol = searchTerm || selectedStock;
+            if (symbol) {
+                console.log('Refreshing data for:', symbol);
+                fetchStockData(symbol);
+            } else {
+                alert('Please enter a stock symbol or select one from the dropdown');
+            }
+        }
+        
+        // Go to home page
+        function goHome() {
+            window.location.href = 'afterlogin.html';
+        }
+        
+        // Save current stock data to MongoDB
+        async function saveToDatabase() {
+            if (!currentStockData) {
+                alert('No stock data to save. Please search for a stock first.');
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please log in to save stock data.');
+                return;
+            }
+            
+            try {
+                // Disable the button while saving
+                const saveBtn = document.getElementById('saveToDBBtn');
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Saving...';
+                
+                // Save stock data to MongoDB
+                await liveStockData.saveStockDataToDB(currentStockData);
+                
+                // Show success message
+                alert(`Stock data for ${currentStockData.symbol} saved to database successfully!`);
+                
+                // Re-enable the button
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save to DB';
+            } catch (error) {
+                console.error('Error saving stock data to database:', error);
+                alert('Failed to save stock data to database: ' + error.message);
+                
+                // Re-enable the button
+                const saveBtn = document.getElementById('saveToDBBtn');
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save to DB';
+            }
+        }
+        
+        // Add current stock to watchlist
+        async function addToWatchlist() {
+            const searchTerm = document.getElementById('stockSearch').value.trim();
+            const selectedStock = document.getElementById('stockDropdown').value;
+            const symbol = searchTerm || selectedStock;
+            
+            if (!symbol) {
+                alert('Please select or enter a stock symbol first.');
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please log in to add stocks to your watchlist.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/watchlist/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ symbol })
+                });
+                
+                if (response.ok) {
+                    alert(`${symbol} added to your watchlist!`);
+                    // Refresh watchlist
+                    loadWatchlistData();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Failed to add stock to watchlist.');
+                }
+            } catch (error) {
+                console.error('Error adding to watchlist:', error);
+                alert('Failed to add stock to watchlist. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

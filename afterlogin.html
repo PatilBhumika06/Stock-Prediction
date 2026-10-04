@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Stock Prediction</title>
+    <style>
+        body {
+            background: url('afterlogin.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            position: relative;
+            color: white;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        .welcome-banner {
+            background: rgba(255, 255, 255, 0.22);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+            padding: 20px 40px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #4CAF50;
+            border: 2px solid #2ecc71;
+            display: inline-block;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .welcome-user {
+            font-size: 2.5rem;
+            color: #FF9800;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .market-info {
+            background: rgba(35, 38, 58, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            text-align: left;
+        }
+        
+        .highlight {
+            color: #FFD600;
+            font-weight: 700;
+        }
+        
+        .check-btn {
+            background: linear-gradient(45deg, #FF9800, #FF5722);
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            padding: 18px 45px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        
+        .back-btn {
+            background: #2196F3;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .back-btn:hover {
+            background: #1976D2;
+        }
+        
+        .error-display {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffcccc;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-banner">Welcome to Stock Prediction</div>
+        <div class="welcome-user" id="userWelcome">User Name</div>
+        
+        <div class="error-display" id="errorDisplay">
+            <!-- Error messages will be displayed here -->
+        </div>
+        
+        <div class="market-info">
+            <p>Stock market prediction uses historical data, technical analysis, and AI models to forecast future price movements.</p>
+            <p>Our system analyzes trends, patterns, and market sentiment to provide you with actionable insights for informed investment decisions.</p>
+            <p class="highlight">Click below to check current stock prices and predictions.</p>
+        </div>
+        
+        <button class="check-btn" onclick="navigateToStockDetails()">Check the Prices</button>
+        
+        <button class="back-btn" onclick="goBack()">Back</button>
+    </div>
+    
+    <script>
+        // Set user name after login
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const username = localStorage.getItem('username') || 'User Name';
+                document.getElementById('userWelcome').textContent = username;
+            } catch (error) {
+                showError('Error loading user information: ' + error.message);
+            }
+        });
+        
+        // Navigate to stock details with error handling
+        function navigateToStockDetails() {
+            try {
+                window.location.href = 'simple-stock-details.html';
+            } catch (error) {
+                showError('Error navigating to stock details: ' + error.message);
+                // Fallback navigation
+                setTimeout(function() {
+                    try {
+                        window.open('simple-stock-details.html', '_self');
+                    } catch (fallbackError) {
+                        showError('Unable to navigate to stock details. Please try again.');
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            const errorDisplay = document.getElementById('errorDisplay');
+            errorDisplay.textContent = message;
+            errorDisplay.style.display = 'block';
+            
+            // Log to console for debugging
+            console.error('Application Error:', message);
+        }
+        
+        // Go back function
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
